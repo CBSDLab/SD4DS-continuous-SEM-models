@@ -6,7 +6,8 @@ This repository contains a collection of standard system dynamics models that ca
 
 The Limits to Growth system dynamics model, which simulates a population of species, generates data across a set of habitats that vary by their type with each type (forests, grasslands, bogs, marshes, etc.) having a different capacity to support the population or carrying capacity. 
 
-img width="659" height="438" alt="image" src="https://github.com/user-attachments/assets/ccf4cfe9-a2b2-4b6b-9f35-5d070e8c4bfa" />
+<img width="659" height="438" alt="image" src="https://github.com/user-attachments/assets/c7cb67c3-468d-4125-8a45-3e4f4476fa3c" />
+
 
 | Variable  | Description |Equation | 
 |:----------|:------------|:-----------------------|
