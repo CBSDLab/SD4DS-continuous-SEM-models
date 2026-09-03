@@ -14,7 +14,7 @@ The Limits to Growth system dynamics model, which simulates a population of spec
 |Population |Size of population| $dPopulation/dt = Births - Deaths $|
 |Births | Number of live births each year | | 
 
-
+Click [here](https://exchange.iseesystems.com/public/psh/limits-to-growth-for-continuous-sem/index.html#page1) to run the model to generate a sample of 100 habitats. 
 
 ## Bass Model of Product Adoption
 
