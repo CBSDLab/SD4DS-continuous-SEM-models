@@ -8,11 +8,11 @@
 		<product version="4.4" isee:build_number="4016" isee:saved_by_v1="true" lang="en">Stella Architect</product>
 	</header>
 	<ai_information>
-		<status verified="false" mixed="true" trusted="true" tampered="false" uses="false" analyzed="false" log_truncated="false" timestamp="1788374763" algorithm="ed25519" keyurl="https://iseesystems.com/keys/stella01.txt" want_var_info="true" want_var_status="false" want_log="false" sampling="1" signature="cbAEE70H8b1syexy3LfKh0dzd6ybEZ5LxlXmehZ42UXBDQpL4ZHWzejl2KrerdxqD4N5d8jB9S7/QsSOsyFgAA=="/>
+		<status verified="false" mixed="true" trusted="true" tampered="false" uses="false" analyzed="false" log_truncated="false" timestamp="1788445030" algorithm="ed25519" keyurl="https://iseesystems.com/keys/stella01.txt" want_var_info="true" want_var_status="false" want_log="false" sampling="1" signature="vgfKSQHO3ycaw1vfiwsEIai+puK+HVQW32HZrwrZMxvybieBg65S79eLXABAcTfioczmvLubSovk6sEzpiXYAQ=="/>
 	</ai_information>
-	<sim_specs isee:sim_duration="0" isee:run_prefix="Run" isee:simulation_delay="0" isee:restore_on_start="false" method="RK4" time_units="Years" isee:instantaneous_flows="false" isee:ignore_module_errors="false" isee:strict_units="false" isee:loop_scores="true" isee:loop_exhaustive_allowed="1000">
+	<sim_specs isee:sim_duration="0" isee:run_prefix="Run" isee:simulation_delay="0" isee:restore_on_start="false" isee:save_interval="0.1" method="RK4" time_units="Years" isee:instantaneous_flows="false" isee:ignore_module_errors="false" isee:strict_units="false" isee:loop_scores="false" isee:loop_exhaustive_allowed="1000">
 		<start>0</start>
-		<stop>100</stop>
+		<stop>25</stop>
 		<dt>0.02</dt>
 	</sim_specs>
 	<isee:prefs saved_runs="5" keep="false" show_module_prefix="true" live_update_on_drag="true" show_restore_buttons="true" layer="model" isee:design="Deluxe Prev-Next Blue Green Pastel" isee:design_custom="false" interface_scale_ui="true" interface_max_page_width="10000" interface_max_page_height="10000" interface_min_page_width="0" interface_min_page_height="0" rifp="false">
@@ -29,6 +29,20 @@
 	</isee:time_formats>
 	<isee:number_format_extenders/>
 	<default_format precision="1" scale_by="1"/>
+	<isee:sensi_specs_list active_index="0">
+		<isee:sensi_specs name="Generate population over set of habitats" method="multivariate" runs="401">
+			<isee:variable type="normal" mean="0.05" std_dev="0.1" min="0.01" max="1" name="Mortality_Risk" num_samples="100"/>
+			<isee:variable type="normal" mean="0.25" std_dev="0.39" min="0.05" max="2" name="Max_Crude_Birth_Rate" num_samples="100"/>
+			<isee:variable type="uniform" min="1" max="120" name="Initial_Population" num_samples="100"/>
+			<isee:variable type="uniform" min="1" max="20" seed="12345" name="Habitat_Type" num_samples="100"/>
+		</isee:sensi_specs>
+	</isee:sensi_specs_list>
+	<isee:optimizer_specs_list active_index="0">
+		<isee:optimizer_specs name="Optimization" method="Powell" use_additional_starts_file="false" additional_starts="0" report_interval="1" confidence_range="0"/>
+	</isee:optimizer_specs_list>
+	<isee:payoff_specs_list>
+		<isee:payoff_specs name="Payoff"/>
+	</isee:payoff_specs_list>
 	<model_units/>
 	<model>
 		<isee:extra_collection_variables>
@@ -36,33 +50,43 @@
 		</isee:extra_collection_variables>
 		<variables>
 			<stock name="Population">
-				<eqn>1</eqn>
+				<eqn>Initial_Population</eqn>
 				<inflow>Births</inflow>
 				<outflow>Deaths</outflow>
-				<non_negative/>
 			</stock>
 			<flow name="Births">
 				<eqn>Max_Crude_Birth_Rate*Effect_of_Population_Size_on_Births*Population</eqn>
-				<non_negative/>
 			</flow>
 			<aux name="Population\nFraction">
 				<eqn>Population/Carrying_Capacity</eqn>
 			</aux>
-			<aux name="Carrying Capacity">
-				<eqn>100</eqn>
+			<aux name="Carrying\nCapacity">
+				<eqn>INIT(RANDOM(20,  200, Habitat_Type))</eqn>
 			</aux>
 			<aux name="Effect of\nPopulation\nSize on\nBirths">
-				<eqn>1-Population_Fraction</eqn>
+				<eqn>MAX(1-Population_Fraction, 0)</eqn>
 			</aux>
 			<flow name="Deaths">
-				<eqn>Max_Mortality_Rate*Population</eqn>
-				<non_negative/>
+				<eqn>Mortality_Risk*Population</eqn>
 			</flow>
-			<aux name="Max Mortality\nRate">
+			<aux name="Mortality\nRisk">
 				<eqn>0.05</eqn>
+				<format precision="auto"/>
+				<range min="0.01" max="1"/>
 			</aux>
 			<aux name="Max Crude\nBirth Rate">
 				<eqn>0.15</eqn>
+				<format precision="auto"/>
+				<range min="0.05" max="2"/>
+			</aux>
+			<aux name="Initial\nPopulation">
+				<eqn>1</eqn>
+				<format precision="auto"/>
+				<range min="0" max="200"/>
+			</aux>
+			<aux name="Habitat\nType">
+				<eqn>1</eqn>
+				<range min="0" max="20"/>
 			</aux>
 		</variables>
 		<views>
@@ -113,7 +137,7 @@
 				<isee:iframe color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid"/>
 				<isee:financial_table color="black" background="white" text_align="right" font_size="12pt" hide_border="false" auto_fit="true" first_column_width="250" other_column_width="100" header_font_style="normal" header_font_weight="bold" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="14pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
 			</style>
-			<view isee:show_pages="false" background="white" isee:converter_size="name_only" page_width="588" page_height="768" isee:page_cols="3" isee:scroll_x="97.8571" isee:scroll_y="46.4286" zoom="140" isee:popup_graphs_are_comparative="true" isee:enable_non_negative_highlights="false" type="stock_flow">
+			<view isee:show_pages="false" background="white" isee:converter_size="large" page_width="588" page_height="768" isee:page_cols="3" isee:scroll_x="382.857" isee:scroll_y="7.14286" zoom="140" isee:popup_graphs_are_comparative="true" isee:enable_non_negative_highlights="false" type="stock_flow">
 				<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
 					<stock color="black" background="white" font_size="12pt" label_side="top">
 						<shape type="rectangle" width="55" height="45"/>
@@ -126,7 +150,7 @@
 						<shape type="rectangle" width="55" height="45"/>
 					</module>
 					<aux color="black" background="white" font_size="12pt" label_side="bottom">
-						<shape type="name_only"/>
+						<shape type="circle" radius="24"/>
 					</aux>
 					<group color="red" background="white" font_color="red" font_size="12pt"/>
 					<connector color="#FF007F" background="white" font_color="#FF007F" font_size="9pt" isee:thickness="1"/>
@@ -152,56 +176,56 @@
 					</graph>
 					<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
 				</style>
-				<connector uid="1" font_size="12pt" polarity="+" isee:polarity_placement="inside" angle="101.933">
+				<connector uid="1" font_size="12pt" polarity="+" isee:polarity_placement="inside" angle="106.175">
 					<from>Population</from>
 					<to>Births</to>
 				</connector>
-				<connector uid="2" font_size="12pt" polarity="+" isee:polarity_placement="inside" angle="290.914">
+				<connector uid="2" font_size="12pt" polarity="+" isee:polarity_placement="inside" angle="291.075">
 					<from>Population</from>
 					<to>Population_Fraction</to>
 				</connector>
-				<connector uid="3" font_size="12pt" polarity="+" isee:polarity_placement="inside" angle="205.028">
+				<connector uid="3" font_size="12pt" polarity="+" isee:polarity_placement="inside" angle="223.985">
 					<from>Population_Fraction</from>
 					<to>Effect_of_Population_Size_on_Births</to>
 				</connector>
-				<connector uid="4" font_size="12pt" polarity="-" isee:polarity_placement="inside" angle="101.25">
+				<connector uid="4" font_size="12pt" polarity="-" isee:polarity_placement="inside" angle="116.757">
 					<from>Effect_of_Population_Size_on_Births</from>
 					<to>Births</to>
 				</connector>
-				<connector uid="5" font_size="12pt" polarity="+" isee:polarity_placement="inside" angle="77.4803">
+				<connector uid="5" font_size="12pt" polarity="+" isee:polarity_placement="inside" angle="73.3694">
 					<from>Population</from>
 					<to>Deaths</to>
 				</connector>
-				<connector uid="6" font_size="12pt" angle="225.823">
-					<from>Max_Mortality_Rate</from>
+				<connector uid="6" font_size="12pt" polarity="+" isee:polarity_placement="outside_mid_arc" angle="253.606">
+					<from>Mortality_Risk</from>
 					<to>Deaths</to>
 				</connector>
-				<connector uid="7" font_size="12pt" angle="317.159">
+				<connector uid="7" font_size="12pt" angle="317.301">
 					<from>Max_Crude_Birth_Rate</from>
 					<to>Births</to>
 				</connector>
-				<connector uid="8" font_size="12pt" polarity="-" isee:polarity_placement="inside" angle="102.156">
+				<connector uid="8" font_size="12pt" polarity="-" isee:polarity_placement="inside" angle="90">
 					<from>Carrying_Capacity</from>
 					<to>Population_Fraction</to>
 				</connector>
-				<stock color="black" label_side="center" x="332.5" y="142.5" width="71.8516" height="60.2852" name="Population"/>
-				<flow color="black" label_side="right" label_angle="315" x="245.395" y="163.516" name="Births">
+				<stock color="black" label_side="center" x="332.5" y="138.635" width="71.8516" height="60.2852" name="Population"/>
+				<flow color="black" label_side="right" label_angle="315" x="251.395" y="168.778" name="Births">
 					<pts>
-						<pt x="158.289" y="163.516"/>
-						<pt x="332.5" y="163.516"/>
+						<pt x="158.289" y="168.778"/>
+						<pt x="332.5" y="168.778"/>
 					</pts>
 				</flow>
-				<aux color="black" label_angle="342.719" x="328.223" y="241.939" width="68" height="42" name="Population\nFraction"/>
-				<aux x="330.533" y="348.871" width="106" height="26" name="Carrying Capacity"/>
-				<aux label_side="left" label_angle="225" x="208.013" y="219.574" width="68" height="74" name="Effect of\nPopulation\nSize on\nBirths"/>
-				<flow label_side="right" label_angle="315" x="488.676" y="164" name="Deaths">
+				<aux color="black" label_angle="342.719" x="362.223" y="262.939" name="Population\nFraction"/>
+				<aux x="362.223" y="327.214" name="Carrying\nCapacity"/>
+				<aux label_side="left" label_angle="225" x="245.395" y="252.866" name="Effect of\nPopulation\nSize on\nBirths"/>
+				<flow label_side="right" label_angle="315" x="494.676" y="168.778" name="Deaths">
 					<pts>
-						<pt x="404.352" y="164"/>
-						<pt x="597" y="164"/>
+						<pt x="404.352" y="168.778"/>
+						<pt x="597" y="168.778"/>
 					</pts>
 				</flow>
-				<aux color="black" label_angle="44.9739" x="488" y="101.5" width="82" height="42" name="Max Mortality\nRate"/>
-				<aux color="black" label_angle="116.923" x="150.457" y="86.9336" width="70" height="42" name="Max Crude\nBirth Rate"/>
+				<aux color="black" label_angle="44.9739" x="526.14" y="107.934" name="Mortality\nRisk"/>
+				<aux color="black" label_angle="116.923" x="185.457" y="107.934" name="Max Crude\nBirth Rate"/>
 				<isee:loop_indicator font_style="italic" font_size="9pt" text="R1" orientation="counter_clockwise" uid="9" x="282.495" y="107.5" width="28" height="30">
 					<name>Reproduction</name>
 				</isee:loop_indicator>
@@ -211,21 +235,81 @@
 				<isee:loop_indicator font_style="italic" font_size="9pt" text="B1" orientation="clockwise" uid="11" x="282.478" y="194.113" width="36" height="37.1016">
 					<name>Overcrowding</name>
 				</isee:loop_indicator>
-				<stacked_container uid="12" x="673" y="210" width="492" height="282" name="Graph 1">
-					<graph x="919" y="351" type="time_series" show_grid="true" isee:tick_type="none" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" isee:show_pie_borders="true" num_x_grid_lines="2" num_y_grid_lines="2" num_x_labels="5" num_y_labels="3" isee:fill_intensity="0.1" left_axis_multi_scale="true" left_axis_auto_scale="false" left_include_units="true" right_axis_multi_scale="true" right_axis_auto_scale="true" right_include_units="true">
-						<plot color="blue" isee:keep_zero_visible="false" pen_width="1" index="0" show_y_axis="true">
+				<stacked_container uid="12" x="629.992" y="46.1105" width="398.577" height="282" name="Graph 1">
+					<graph legend_position="none" width="398.577" height="282" comparative="true" type="time_series" show_grid="true" isee:tick_type="none" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" isee:show_pie_borders="true" num_x_grid_lines="2" num_y_grid_lines="2" num_x_labels="5" num_y_labels="3" isee:fill_intensity="0.1" isee:allow_zero_axis="true" isee:rescale_min_max="true" left_axis_multi_scale="false" left_axis_auto_scale="false" left_include_units="true" right_axis_multi_scale="false" right_axis_auto_scale="true" right_include_units="true">
+						<plot color="blue" isee:keep_zero_visible="true" pen_width="1" index="0" show_y_axis="true">
 							<entity name="Population"/>
-							<scale min="0" max="80"/>
+						</plot>
+					</graph>
+					<graph width="398.577" height="282" type="time_series" show_grid="false" isee:tick_type="none" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" isee:show_pie_borders="true" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" isee:fill_intensity="0.1" isee:allow_zero_axis="true" left_axis_multi_scale="false" left_axis_auto_scale="true" left_include_units="true" right_axis_multi_scale="false" right_axis_auto_scale="true" right_include_units="true">
+						<plot color="blue" isee:keep_zero_visible="true" pen_width="1" index="0" show_y_axis="true">
+							<entity name="Population"/>
 						</plot>
 					</graph>
 				</stacked_container>
+				<aux x="828.641" y="361.871" name="Initial\nPopulation"/>
+				<aux label_side="right" x="451.169" y="327.214" name="Habitat\nType"/>
+				<connector uid="16" angle="180">
+					<from>Habitat_Type</from>
+					<to>Carrying_Capacity</to>
+				</connector>
+				<alias color="black" font_style="italic" uid="13" x="891.379" y="347.381" width="24" height="24">
+					<of>Max_Crude_Birth_Rate</of>
+				</alias>
+				<alias color="black" font_style="italic" uid="14" x="967.252" y="347.381" width="24" height="24">
+					<of>Mortality_Risk</of>
+				</alias>
+				<alias font_style="italic" uid="15" x="1028.57" y="346.789" width="24" height="24">
+					<of>Carrying_Capacity</of>
+				</alias>
 			</view>
 			<view background="white" page_width="788" page_height="528" home_view="true" type="interface">
-				<style/>
+				<style>
+					<isee:stacked_container item_spacing="0" corner_radius="4" selected_item_color="black" selected_item_background="white" item_background="#DDDDDD" transparent_bg="false"/>
+				</style>
+				<button label="Run simulation" isee:tooltip="Click to run 100 simulations" x="473" y="493">
+					<actions>
+						<action isee:analysis_index="0">run_sensitivity</action>
+					</actions>
+				</button>
+				<stacked_container x="442" y="124" width="328" height="336">
+					<graph legend_position="none" width="328" height="336" comparative="true" type="time_series" show_grid="false" isee:tick_type="none" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" isee:show_pie_borders="true" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" isee:fill_intensity="0.1" isee:allow_zero_axis="true" left_axis_multi_scale="false" left_axis_auto_scale="true" left_include_units="true" right_axis_multi_scale="false" right_axis_auto_scale="true" right_include_units="true">
+						<plot isee:immediately_update_on_user_input="true" color="blue" isee:keep_zero_visible="true" pen_width="1" index="0" show_y_axis="true">
+							<entity name="Population"/>
+						</plot>
+					</graph>
+				</stacked_container>
+				<button label="Clear results" isee:tooltip="" x="640" y="493">
+					<actions>
+						<action>restore_all</action>
+					</actions>
+				</button>
+				<button label="Export" isee:tooltip="Click to download runs in wide format" x="552.5" y="493">
+					<actions>
+						<action interval="0.1" orientation="vertical" comparative="true" use_actual_variable_names="true" type="export_data">
+							<entity name="Population"/>
+							<entity name="Births"/>
+							<entity name="Deaths"/>
+							<entity name="Carrying_Capacity"/>
+							<entity name="Effect_of_Population_Size_on_Births"/>
+							<entity name="Initial_Population"/>
+							<entity name="Max_Crude_Birth_Rate"/>
+							<entity name="Mortality_Risk"/>
+							<entity name="Population_Fraction"/>
+						</action>
+					</actions>
+				</button>
+				<isee:model_view x="37" y="126" width="379" height="332" zoom="0.75" center_x="368.426" center_y="221.333" locked_view="true" transparent="true" show_ltm_table="false">
+					<model name="Top-Level"/>
+					<isee:highlight_list/>
+				</isee:model_view>
+				<text_box x="22" y="23" width="743" height="85">The Limits to Growth system dynamics model simulates the population of a species across 100 habitats of different types with varying carrying capacity to support the population. Click [Run simulation] to generate a new synthetic data set with normally randomly distributed parameters of Max Crude Birth Rate, Mortality Risks, and initial Population. Click [Export] to download a .csv file in wide format with all 100 runs. Click [Clear results] to clear the graph. Note that this is not needed if generating multiple sets of 100 habitats as each set is generated from new random parameters. </text_box>
 			</view>
 			<isee:templates>
 				<view background="white" page_width="788" page_height="528" type="template">
-					<style/>
+					<style>
+						<isee:stacked_container item_spacing="0" corner_radius="4" selected_item_color="black" selected_item_background="white" item_background="#DDDDDD" transparent_bg="false"/>
+					</style>
 				</view>
 			</isee:templates>
 			<isee:stories/>
