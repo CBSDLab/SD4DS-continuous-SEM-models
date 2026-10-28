@@ -22,7 +22,7 @@ Click [here](https://exchange.iseesystems.com/public/psh/bass-product-adoption-n
 
 The Susceptible-Recovered-Infected (SIR) model with losing immunity simulations a population exposed to an infectious disease. 
 
-<img width="680" height="433" alt="image" src="https://github.com/user-attachments/assets/bb4e1be2-d658-48dc-b2d7-7ac5da2d1950" />
+<img width="545" height="341" alt="image" src="https://github.com/user-attachments/assets/c099df4d-e4da-472b-b89f-4db7da0376c2" />
 
 Click [here](https://exchange.iseesystems.com/public/psh/sir-for-continuous-sem-n1/index.html#page1) to run the model and generate synthetic data sets. 
 
