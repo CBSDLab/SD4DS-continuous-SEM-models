@@ -19,6 +19,4 @@ The Bass model of product growth simulations simulates product adoption and grow
 
 Click [here](https://exchange.iseesystems.com/public/psh/bass-product-adoption-n1/index.html#page1) to run the model and generate synthetic data sets. 
 
-## SIR Model of Epidemics
-
 
