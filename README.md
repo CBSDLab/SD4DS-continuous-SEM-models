@@ -4,20 +4,20 @@ This repository contains a collection of standard system dynamics models that ca
 
 ## Limits to Growth
 
-The Limits to Growth system dynamics model, which simulates a population of species, generates data across a set of habitats that vary by their type with each type (forests, grasslands, bogs, marshes, etc.) having a different capacity to support the population or carrying capacity. 
+The Limits to Growth system dynamics model simulates a population growth of a species in habitat.   
 
 <img width="659" height="438" alt="image" src="https://github.com/user-attachments/assets/c7cb67c3-468d-4125-8a45-3e4f4476fa3c" />
 
+Click [here](https://exchange.iseesystems.com/public/psh/limits-to-growth-for-continuous-sem/index.html#page1) to run the model and generate synthetic data sets.  
 
-| Variable  | Description |Equation | 
-|:----------|:------------|:-----------------------|
-|Population |Size of population| $dPopulation/dt = Births - Deaths $|
-|Births | Number of live births each year | | 
+## Bass Model of Product Growth
 
-Click [here](https://exchange.iseesystems.com/public/psh/limits-to-growth-for-continuous-sem/index.html#page1) to run the model to generate a sample of 100 habitats. 
+The Bass model of product growth simulations simulates product adoption and growth through innovation and immitation. 
 
-## Bass Model of Product Adoption
+<img width="432" height="556" alt="image" src="https://github.com/user-attachments/assets/e26353db-c2ce-462c-ba16-1e58b25e1518" />
 
+
+Click [here](https://exchange.iseesystems.com/public/psh/bass-product-adoption-n1/index.html#page1) to run the model and generate synthetic data sets. 
 
 ## SIR Model of Epidemics
 
