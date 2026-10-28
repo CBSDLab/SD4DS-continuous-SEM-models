@@ -16,7 +16,15 @@ The Bass model of product growth simulations simulates product adoption and grow
 
 <img width="432" height="556" alt="image" src="https://github.com/user-attachments/assets/e26353db-c2ce-462c-ba16-1e58b25e1518" />
 
-
 Click [here](https://exchange.iseesystems.com/public/psh/bass-product-adoption-n1/index.html#page1) to run the model and generate synthetic data sets. 
+
+## SIR with Losing Immunity
+
+The Susceptible-Recovered-Infected (SIR) model with losing immunity simulations a population exposed to an infectious disease. 
+
+<img width="680" height="433" alt="image" src="https://github.com/user-attachments/assets/bb4e1be2-d658-48dc-b2d7-7ac5da2d1950" />
+
+Click [here](https://exchange.iseesystems.com/public/psh/sir-for-continuous-sem-n1/index.html#page1) to run the model and generate synthetic data sets. 
+
 
 
