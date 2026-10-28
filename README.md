@@ -8,7 +8,7 @@ The Limits to Growth system dynamics model simulates a population growth of a sp
 
 <img width="659" height="438" alt="image" src="https://github.com/user-attachments/assets/c7cb67c3-468d-4125-8a45-3e4f4476fa3c" />
 
-Click [here](https://exchange.iseesystems.com/public/psh/limits-to-growth-for-continuous-sem/index.html#page1) to run the model and generate synthetic data sets.  
+Click [here](https://exchange.iseesystems.com/public/psh/limits-to-growth-for-continuous-sem-n1/index.html#page1) to run the model and generate synthetic data sets.  
 
 ## Bass Model of Product Growth
 
