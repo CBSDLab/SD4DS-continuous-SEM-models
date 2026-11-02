@@ -6,7 +6,7 @@ This repository contains a collection of standard system dynamics models that ca
 
 The Limits to Growth system dynamics model simulates a population growth of a species in habitat.   
 
-<img width="556" height="361" alt="image" src="https://github.com/user-attachments/assets/8dd3edf1-1738-405f-bd61-26afd98b6658" />
+<img width="556" height="361" alt="image" src="https://github.com/user-attachments/assets/01f5fd21-ff25-4592-9a9a-0389b7ae131d" />
 
 Click [here](https://exchange.iseesystems.com/public/psh/limits-to-growth-for-continuous-sem-n1/index.html#page1) to run the model and generate synthetic data sets.  
 
