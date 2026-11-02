@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xmile version="1.0" xmlns="http://docs.oasis-open.org/xmile/ns/XMILE/v1.0" xmlns:isee="http://iseesystems.com/XMILE">
+	<header>
+		<smile version="1.0" namespace="std, isee"/>
+		<name>SIR</name>
+		<uuid>2410d395-d9d5-4cf5-98bf-47c2756e838a</uuid>
+		<vendor>isee systems, inc.</vendor>
+		<product version="4.4" isee:build_number="4034" isee:saved_by_v1="true" lang="en">Stella Architect</product>
+	</header>
+	<ai_information>
+		<status verified="false" mixed="true" trusted="true" tampered="false" uses="false" analyzed="false" log_truncated="false" timestamp="1793222028" algorithm="ed25519" keyurl="https://iseesystems.com/keys/stella01.txt" want_var_info="true" want_var_status="false" want_log="false" sampling="1" signature="qlvzMxO49K3qtdlG1dXN8PK8515LUj6ymbNlt9nx9nB4aE1XilVfpD/sN56LVbvh7+3pZhbVtFMa7kof46fiCQ=="/>
+	</ai_information>
+	<sim_specs isee:sim_duration="0" isee:run_prefix="Run" isee:simulation_delay="0" isee:restore_on_start="false" method="Euler" time_units="Months" isee:instantaneous_flows="false" isee:ignore_module_errors="false" isee:strict_units="false" isee:loop_scores="true" isee:loop_exhaustive_allowed="1000">
+		<start>0</start>
+		<stop>24</stop>
+		<dt>0.015625</dt>
+	</sim_specs>
+	<isee:prefs saved_runs="5" keep="false" show_module_prefix="true" live_update_on_drag="true" show_restore_buttons="false" layer="map" isee:design="Deluxe Prev-Next Blue Green Pastel" isee:design_custom="false" interface_scale_ui="true" interface_max_page_width="10000" interface_max_page_height="10000" interface_min_page_width="0" interface_min_page_height="0" rifp="false">
+		<isee:tag_styles>
+			<isee:tag_style tag="Interface"/>
+			<isee:tag_style tag="Output"/>
+			<isee:tag_style tag="Parameter"/>
+			<isee:tag_style tag="Policy"/>
+		</isee:tag_styles>
+		<isee:ignored_words>
+			<isee:ignored_word>Infectivity</isee:ignored_word>
+		</isee:ignored_words>
+	</isee:prefs>
+	<isee:multiplayer_settings include_chat="true" allow_observers="false" advance_time_increment="1" max_advance_time_in_ms="0" model_stops_when_players_drop="false" observer_start_page="home_page" enabled="false"/>
+	<isee:time_formats default_format="Builtin">
+		<isee:time_format name="Builtin" type="adaptive"/>
+	</isee:time_formats>
+	<isee:number_format_extenders/>
+	<default_format/>
+	<isee:sensi_specs_list active_index="0">
+		<isee:sensi_specs name="Sensitivity" method="multivariate" runs="0"/>
+	</isee:sensi_specs_list>
+	<model_units>
+		<unit name="People">
+			<eqn/>
+			<alias>person</alias>
+			<alias>persons</alias>
+		</unit>
+		<unit name="Months">
+			<eqn/>
+			<alias>mo</alias>
+			<alias>month</alias>
+		</unit>
+		<unit name="Dimensionless">
+			<eqn>1</eqn>
+			<alias>dmnl</alias>
+			<alias>unitless</alias>
+		</unit>
+	</model_units>
+	<model>
+		<variables>
+			<stock name="Susceptible">
+				<eqn>5000</eqn>
+				<inflow>Losing_Immunity</inflow>
+				<outflow>Infection_Rate</outflow>
+				<non_negative/>
+				<units>People</units>
+			</stock>
+			<stock name="Infected">
+				<eqn>1</eqn>
+				<inflow>Infection_Rate</inflow>
+				<outflow>Recovery_Rate</outflow>
+				<non_negative/>
+				<units>People</units>
+			</stock>
+			<stock name="Recovered">
+				<eqn>0</eqn>
+				<inflow>Recovery_Rate</inflow>
+				<outflow>Losing_Immunity</outflow>
+				<non_negative/>
+				<units>People</units>
+			</stock>
+			<flow name="Infection\nRate">
+				<eqn>Susceptible*
+Infected*
+Contact_rate*
+Infectivity/Total_population</eqn>
+				<non_negative/>
+				<units>People/Months</units>
+			</flow>
+			<flow name="Recovery\nRate">
+				<eqn>Infected/Average_recovery_time</eqn>
+				<non_negative/>
+				<units>People/Months</units>
+			</flow>
+			<aux name="Average\nrecovery\ntime">
+				<eqn>INIT(RANDOM(.125, 60))</eqn>
+				<units>Months</units>
+			</aux>
+			<aux name="Total population">
+				<eqn>INIT(RANDOM(4000, 1e6))</eqn>
+				<units>People</units>
+			</aux>
+			<aux name="Infectivity">
+				<eqn>INIT(RANDOM(0.01,  0.5))</eqn>
+				<units>Dimensionless</units>
+			</aux>
+			<aux name="Contact rate">
+				<eqn>INIT(RANDOM(5, 200))</eqn>
+				<units>people/people/month</units>
+			</aux>
+			<aux name="Total susceptible">
+				<eqn>Infected + Recovered + Susceptible</eqn>
+				<isee:summing/>
+			</aux>
+			<aux name="R0">
+				<eqn>Contact_rate*
+Infectivity*
+Average_recovery_time*
+Total_susceptible/Total_population</eqn>
+			</aux>
+			<aux name="Observed\nSusceptible 1">
+				<eqn>MAX(Susceptible + NORMAL(0, e_1), 0)</eqn>
+			</aux>
+			<aux name="e 1">
+				<eqn>100</eqn>
+			</aux>
+			<aux name="Observed\nSusceptible 2">
+				<eqn>MAX(Susceptible + NORMAL(0, e_2), 0)</eqn>
+			</aux>
+			<aux name="e 2">
+				<eqn>100</eqn>
+			</aux>
+			<aux name="Observed\nSusceptible 3">
+				<eqn>MAX(Susceptible + NORMAL(0, e_3), 0)</eqn>
+			</aux>
+			<aux name="e 3">
+				<eqn>100</eqn>
+			</aux>
+			<aux name="Observed\nInfected 1">
+				<eqn>MAX(Infected + NORMAL(0, e_4), 0)</eqn>
+			</aux>
+			<aux name="e 4">
+				<eqn>50</eqn>
+			</aux>
+			<aux name="Observed\nInfected 2">
+				<eqn>MAX(Infected + NORMAL(0, e_5), 0)</eqn>
+			</aux>
+			<aux name="e 5">
+				<eqn>50</eqn>
+			</aux>
+			<aux name="Observed\nInfected 3">
+				<eqn>MAX(Infected + NORMAL(0, e_6), 0)</eqn>
+			</aux>
+			<aux name="e 6">
+				<eqn>50</eqn>
+			</aux>
+			<aux name="Observed\nRecovered 1">
+				<eqn>MAX(Recovered + NORMAL(0, e_7), 0)</eqn>
+			</aux>
+			<aux name="e 7">
+				<eqn>100</eqn>
+			</aux>
+			<aux name="Observed\nRecovered 2">
+				<eqn>MAX(Recovered + NORMAL(0, e_8), 0)</eqn>
+			</aux>
+			<aux name="e 8">
+				<eqn>100</eqn>
+			</aux>
+			<aux name="Observed\nRecovered 3">
+				<eqn>MAX(Recovered + NORMAL(0, e_9), 0)</eqn>
+			</aux>
+			<aux name="e 9">
+				<eqn>100</eqn>
+			</aux>
+			<flow name="Losing\nImmunity">
+				<eqn>Recovered/
+Average_Length_of_Immunity</eqn>
+				<non_negative/>
+				<units>People/Months</units>
+			</flow>
+			<aux name="Average\nLength\nof Immunity">
+				<eqn>INIT(RANDOM(1, 36))</eqn>
+				<units>Months</units>
+			</aux>
+		</variables>
+		<views>
+			<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
+				<text_box color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<isee:loop_indicator color="black" background="white" vertical_text_align="top" font_size="12pt"/>
+				<numeric_display color="blue" background="white" font_size="9pt" border_width="thin" border_style="solid" isee:transparent="false" isee:show_divider="true" isee:show_bounding_box="true" label_side="left"/>
+				<graph color="black" background="white" font_size="12pt" axis_color="#666666" grid_color="#C8C8C8" isee:graph_area_color="white" legend_position="bottom" isee:transparent="false" isee:hide_border="false" axis_title_font_style="normal" axis_title_font_weight="normal" axis_title_text_decoration="none" axis_title_text_align="center" axis_title_vertical_text_align="center" axis_title_font_color="black" axis_title_font_family="Arial" axis_title_font_size="12pt" axis_title_text_padding="2" axis_title_text_border_color="black" axis_title_text_border_width="thin" axis_title_text_border_style="none" axis_label_font_style="normal" axis_label_font_weight="normal" axis_label_text_decoration="none" axis_label_text_align="center" axis_label_vertical_text_align="center" axis_label_font_color="black" axis_label_font_family="Arial" axis_label_font_size="9pt" axis_label_text_padding="2" axis_label_text_border_color="black" axis_label_text_border_width="thin" axis_label_text_border_style="none">
+					<isee:series_styles>
+						<isee:series_style color="blue" thickness="1"/>
+						<isee:series_style color="red" thickness="1"/>
+						<isee:series_style color="fuchsia" thickness="1"/>
+						<isee:series_style color="#008F44" thickness="1"/>
+						<isee:series_style color="#FF7F00" thickness="1"/>
+						<isee:series_style color="#7F00FF" thickness="1"/>
+						<isee:series_style color="#0CA0FF" thickness="1"/>
+						<isee:series_style color="lime" thickness="1"/>
+						<isee:series_style color="#FF007F" thickness="1"/>
+						<isee:series_style color="aqua" thickness="1"/>
+						<isee:series_style color="#F586FF" thickness="1"/>
+						<isee:series_style color="black" thickness="1"/>
+						<isee:series_style color="#C8C8C8" thickness="1"/>
+					</isee:series_styles>
+				</graph>
+				<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+				<button color="black" background="#E0E0E0" font_size="12pt" border_width="thin" border_style="solid" transparent="false" corner_radius="0" isee:flat="false" icon_side="top" isee:highlight_on_hover="false" isee:highlight_color="#959595"/>
+				<isee:annotation color="black" background="#E0E0E0" font_size="12pt" border_width="thin" border_style="solid" transparent="false" corner_radius="0" isee:flat="false" icon_side="top" isee:highlight_on_hover="false" isee:highlight_color="#959595" popup_corner_radius="0" popup_background_color="#FFFECF"/>
+				<slider color="#0075FF" background="#E0E0E0" font_size="12pt" num_ticks="3" label_side="top" wrap_title="true" vertical="false" isee:fancy_appearance="false" isee:show_hover_tip="when_deciding" input_expands="true" input_width="100"/>
+				<isee:stacked_container color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" padding="6 8" border_color="#999999" border_width="thin" border_style="solid" item_spacing="0" corner_radius="4" selected_item_color="black" selected_item_background="white" item_background="#DDDDDD" transparent_bg="false"/>
+				<isee:dual_slider color="black" background="white" font_size="12pt" num_ticks="3" label_side="top" wrap_title="true" isee:show_hover_tip="when_deciding" input_expands="true" input_width="100"/>
+				<isee:sim_speed_slider color="black" background="white"/>
+				<isee:time_slider color="black" background="white"/>
+				<isee:pie_input color="black" background="white" font_size="12pt" legend_position="bottom" isee:transparent="false"/>
+				<knob color="#66CC66" background="#E0E0E0" font_size="12pt" label_side="bottom" wrap_title="true"/>
+				<numeric_input color="black" background="#E0E0E0" font_size="12pt" label_side="left" wrap_title="true" input_expands="false" input_width="100"/>
+				<isee:dropdown_input color="black" background="white" font_size="12pt" label_side="left" wrap_title="true" input_expands="false" input_width="100"/>
+				<switch color="black" background="#E0E0E0" font_size="12pt" label_side="top" wrap_title="true" isee:appearance="switch" isee:on_color="green"/>
+				<options color="black" background="white" appearance="radio-buttons" arrangement="vertical"/>
+				<graphical_input color="black" background="#E0E0E0" font_size="12pt" isee:show_hover_tip="true"/>
+				<group_input color="black" background="#E0E0E0" font_size="12pt"/>
+				<lamp color="black" background="white" font_size="9pt"/>
+				<gauge color="black" background="white" font_size="9pt" needle_color="#F09F72" bar_color="#EEEEEE" bar_progress_color="black" appearance="radial" num_major_ticks="11" num_minor_ticks="1" show_numeric_value="true"/>
+				<isee:spatial_map color="black" background="white" font_size="12pt"/>
+				<isee:animation_object color="black" background="white" font_size="12pt"/>
+				<isee:navigation_widget color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" padding="6 8" border_color="#999999" border_width="thin" border_style="solid" item_spacing="6" appearance="tabs" corner_radius="4" selected_item_color="black" selected_item_background="white" item_background="#DDDDDD" transparent_bg="false"/>
+				<isee:shape color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid" opacity="1" transparent_background="true" corner_radius="1"/>
+				<isee:selector color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<isee:iframe color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid"/>
+				<isee:financial_table color="black" background="white" text_align="right" font_size="12pt" hide_border="false" auto_fit="true" first_column_width="250" other_column_width="100" header_font_style="normal" header_font_weight="bold" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="14pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+			</style>
+			<view isee:show_pages="false" background="white" page_width="770" page_height="590" isee:page_cols="2" zoom="120" isee:popup_graphs_are_comparative="true" isee:enable_non_negative_highlights="false" type="stock_flow">
+				<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
+					<stock color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
+						<shape type="rectangle" width="45" height="35"/>
+					</stock>
+					<flow color="blue" background="white" font_color="blue" font_size="9pt" label_side="bottom">
+						<shape type="circle" radius="18"/>
+					</flow>
+					<isee:placeholder color="#228B22" background="white" font_color="#228B22" label_side="bottom"/>
+					<module color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
+						<shape type="rectangle" width="55" height="45"/>
+					</module>
+					<aux color="blue" background="white" font_color="blue" font_size="9pt" label_side="bottom">
+						<shape type="circle" radius="18"/>
+					</aux>
+					<group color="red" background="white" font_color="red" font_size="9pt"/>
+					<connector color="#FF007F" background="white" font_color="#FF007F" font_size="9pt" isee:thickness="1"/>
+					<text_box color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+					<isee:loop_indicator color="black" background="white"/>
+					<numeric_display color="blue" background="white" font_size="9pt" border_width="thin" border_style="solid" isee:transparent="false" isee:show_divider="true" isee:show_bounding_box="true" label_side="left"/>
+					<graph color="black" background="white" font_size="12pt" axis_color="#666666" grid_color="#C8C8C8" isee:graph_area_color="white" legend_position="bottom" isee:transparent="false" isee:hide_border="false" axis_title_font_style="normal" axis_title_font_weight="normal" axis_title_text_decoration="none" axis_title_text_align="center" axis_title_vertical_text_align="center" axis_title_font_color="black" axis_title_font_family="Arial" axis_title_font_size="12pt" axis_title_text_padding="2" axis_title_text_border_color="black" axis_title_text_border_width="thin" axis_title_text_border_style="none" axis_label_font_style="normal" axis_label_font_weight="normal" axis_label_text_decoration="none" axis_label_text_align="center" axis_label_vertical_text_align="center" axis_label_font_color="black" axis_label_font_family="Arial" axis_label_font_size="9pt" axis_label_text_padding="2" axis_label_text_border_color="black" axis_label_text_border_width="thin" axis_label_text_border_style="none">
+						<isee:series_styles>
+							<isee:series_style color="blue" thickness="1"/>
+							<isee:series_style color="red" thickness="1"/>
+							<isee:series_style color="fuchsia" thickness="1"/>
+							<isee:series_style color="#008F44" thickness="1"/>
+							<isee:series_style color="#FF7F00" thickness="1"/>
+							<isee:series_style color="#7F00FF" thickness="1"/>
+							<isee:series_style color="#0CA0FF" thickness="1"/>
+							<isee:series_style color="lime" thickness="1"/>
+							<isee:series_style color="#FF007F" thickness="1"/>
+							<isee:series_style color="aqua" thickness="1"/>
+							<isee:series_style color="#F586FF" thickness="1"/>
+							<isee:series_style color="black" thickness="1"/>
+							<isee:series_style color="#C8C8C8" thickness="1"/>
+						</isee:series_styles>
+					</graph>
+					<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+				</style>
+				<stock x="132.668" y="208.315" name="Susceptible"/>
+				<stock x="295.467" y="208.315" name="Infected"/>
+				<stock x="473.525" y="208.315" name="Recovered"/>
+				<flow label_side="top" x="208.067" y="208.315" name="Infection\nRate">
+					<pts>
+						<pt x="155.168" y="208.315"/>
+						<pt x="272.967" y="208.315"/>
+					</pts>
+				</flow>
+				<flow x="378.496" y="208.315" name="Recovery\nRate">
+					<pts>
+						<pt x="317.967" y="208.315"/>
+						<pt x="451.025" y="208.315"/>
+					</pts>
+				</flow>
+				<aux label_side="top" x="384.042" y="142.11" name="Average\nrecovery\ntime"/>
+				<connector uid="1" polarity="-" isee:polarity_placement="inside_mid_arc" angle="265.212">
+					<from>Average_recovery_time</from>
+					<to>Recovery_Rate</to>
+				</connector>
+				<aux x="206.383" y="304.631" name="Total population"/>
+				<aux x="242.612" y="260.013" name="Infectivity"/>
+				<aux x="169.703" y="256.375" name="Contact rate"/>
+				<connector uid="2" polarity="+" isee:polarity_placement="inside_mid_arc" angle="123.751">
+					<from>Infectivity</from>
+					<to>Infection_Rate</to>
+				</connector>
+				<connector uid="3" polarity="+" isee:polarity_placement="inside_mid_arc" angle="34.5064">
+					<from>Susceptible</from>
+					<to>Infection_Rate</to>
+				</connector>
+				<connector uid="4" polarity="+" isee:polarity_placement="inside_mid_arc" angle="145.556">
+					<from>Infected</from>
+					<to>Infection_Rate</to>
+				</connector>
+				<connector uid="5" polarity="+" isee:polarity_placement="inside_mid_arc" angle="37.4663">
+					<from>Infected</from>
+					<to>Recovery_Rate</to>
+				</connector>
+				<connector uid="6" polarity="+" isee:polarity_placement="inside_mid_arc" angle="51.4007">
+					<from>Contact_rate</from>
+					<to>Infection_Rate</to>
+				</connector>
+				<connector uid="7" polarity="-" isee:polarity_placement="inside_mid_arc" angle="88.998">
+					<from>Total_population</from>
+					<to>Infection_Rate</to>
+				</connector>
+				<aux x="618.187" y="426.488" name="Total susceptible"/>
+				<aux label_side="top" x="675.12" y="426.488" name="R0"/>
+				<connector uid="12" angle="0">
+					<from>Total_susceptible</from>
+					<to>R0</to>
+				</connector>
+				<connector uid="13" angle="68.3258">
+					<from>
+						<alias uid="10"/>
+					</from>
+					<to>R0</to>
+				</connector>
+				<connector uid="14" angle="135.436">
+					<from>
+						<alias uid="9"/>
+					</from>
+					<to>R0</to>
+				</connector>
+				<connector uid="15" angle="166.637">
+					<from>
+						<alias uid="8"/>
+					</from>
+					<to>R0</to>
+				</connector>
+				<connector uid="16" angle="213.882">
+					<from>
+						<alias uid="11"/>
+					</from>
+					<to>R0</to>
+				</connector>
+				<aux label_side="top" x="40.4405" y="111.434" name="Observed\nSusceptible 1"/>
+				<aux label_side="top" x="40.4405" y="46.8467" name="e 1"/>
+				<connector uid="17" angle="270">
+					<from>e_1</from>
+					<to>Observed_Susceptible_1</to>
+				</connector>
+				<connector uid="18" angle="133.591">
+					<from>Susceptible</from>
+					<to>Observed_Susceptible_1</to>
+				</connector>
+				<aux label_side="top" x="102.416" y="111.434" name="Observed\nSusceptible 2"/>
+				<aux label_side="top" x="102.416" y="46.8467" name="e 2"/>
+				<connector uid="19" angle="270">
+					<from>e_2</from>
+					<to>Observed_Susceptible_2</to>
+				</connector>
+				<aux label_side="top" x="164.027" y="111.032" name="Observed\nSusceptible 3"/>
+				<aux label_side="top" x="164.027" y="46.4452" name="e 3"/>
+				<connector uid="20" angle="270">
+					<from>e_3</from>
+					<to>Observed_Susceptible_3</to>
+				</connector>
+				<connector uid="21" angle="100.972">
+					<from>Susceptible</from>
+					<to>Observed_Susceptible_2</to>
+				</connector>
+				<connector uid="22" angle="72.0084">
+					<from>Susceptible</from>
+					<to>Observed_Susceptible_3</to>
+				</connector>
+				<aux label_side="top" x="231.11" y="109.09" name="Observed\nInfected 1"/>
+				<aux label_side="top" x="231.11" y="44.5029" name="e 4"/>
+				<connector uid="23" angle="270">
+					<from>e_4</from>
+					<to>Observed_Infected_1</to>
+				</connector>
+				<connector uid="25" angle="122.967">
+					<from>Infected</from>
+					<to>Observed_Infected_1</to>
+				</connector>
+				<aux label_side="top" x="285.969" y="109.09" name="Observed\nInfected 2"/>
+				<aux label_side="top" x="285.969" y="44.0862" name="e 5"/>
+				<connector uid="26" angle="270">
+					<from>e_5</from>
+					<to>Observed_Infected_2</to>
+				</connector>
+				<aux label_side="top" x="333.858" y="109.09" name="Observed\nInfected 3"/>
+				<aux label_side="top" x="333.858" y="41.4157" name="e 6"/>
+				<connector uid="24" angle="270">
+					<from>e_6</from>
+					<to>Observed_Infected_3</to>
+				</connector>
+				<connector uid="27" angle="95.4673">
+					<from>Infected</from>
+					<to>Observed_Infected_2</to>
+				</connector>
+				<connector uid="28" angle="68.8477">
+					<from>Infected</from>
+					<to>Observed_Infected_3</to>
+				</connector>
+				<aux label_side="top" x="438.302" y="109.09" name="Observed\nRecovered 1"/>
+				<aux label_side="top" x="438.302" y="41.4157" name="e 7"/>
+				<connector uid="29" angle="270">
+					<from>e_7</from>
+					<to>Observed_Recovered_1</to>
+				</connector>
+				<connector uid="31" angle="115.972">
+					<from>Recovered</from>
+					<to>Observed_Recovered_1</to>
+				</connector>
+				<aux label_side="top" x="496.746" y="109.09" name="Observed\nRecovered 2"/>
+				<aux label_side="top" x="496.746" y="41.4157" name="e 8"/>
+				<connector uid="30" angle="270">
+					<from>e_8</from>
+					<to>Observed_Recovered_2</to>
+				</connector>
+				<aux label_side="top" x="553.035" y="109.09" name="Observed\nRecovered 3"/>
+				<aux label_side="top" x="553.035" y="41.4157" name="e 9"/>
+				<connector uid="32" angle="270">
+					<from>e_9</from>
+					<to>Observed_Recovered_3</to>
+				</connector>
+				<connector uid="33" angle="77.3688">
+					<from>Recovered</from>
+					<to>Observed_Recovered_2</to>
+				</connector>
+				<connector uid="34" angle="53.0268">
+					<from>Recovered</from>
+					<to>Observed_Recovered_3</to>
+				</connector>
+				<flow isee:segment_with_valve="0" label_side="left" x="474.606" y="297.818" name="Losing\nImmunity">
+					<pts>
+						<pt x="474.606" y="225.815"/>
+						<pt x="474.606" y="369.821"/>
+						<pt x="132.106" y="369.821"/>
+						<pt x="132.106" y="225.815"/>
+					</pts>
+				</flow>
+				<connector uid="35" polarity="+" isee:polarity_placement="inside_mid_arc" angle="231.589">
+					<from>Recovered</from>
+					<to>Losing_Immunity</to>
+				</connector>
+				<aux label_side="bottom" x="535.035" y="297.818" name="Average\nLength\nof Immunity"/>
+				<connector uid="36" polarity="-" isee:polarity_placement="inside_mid_arc" angle="175.963">
+					<from>Average_Length_of_Immunity</from>
+					<to>Losing_Immunity</to>
+				</connector>
+				<alias font_style="italic" label_side="right" uid="8" x="741.892" y="435.488" width="18" height="18">
+					<of>Infectivity</of>
+				</alias>
+				<alias font_style="italic" uid="9" x="717.406" y="468" width="18" height="18">
+					<of>Total_population</of>
+				</alias>
+				<alias font_style="italic" uid="10" x="644.401" y="472.137" width="18" height="18">
+					<of>Contact_rate</of>
+				</alias>
+				<alias font_style="italic" label_side="right" label_angle="315" uid="11" x="723.892" y="378.693" width="18" height="18">
+					<of>Average_recovery_time</of>
+				</alias>
+			</view>
+			<view background="white" page_width="1066" page_height="600" home_view="true" type="interface">
+				<style/>
+				<isee:model_view x="4" y="92" width="610" height="385" zoom="1" center_x="305" center_y="192.5" locked_view="true" transparent="true" show_ltm_table="false">
+					<model name="Top-Level"/>
+					<isee:highlight_list/>
+				</isee:model_view>
+				<stacked_container x="612.167" y="106.5" width="435" height="356">
+					<graph width="435" height="356" type="time_series" show_grid="false" isee:tick_type="none" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" isee:show_pie_borders="true" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" title="Observed Variables" isee:fill_intensity="0.1" isee:allow_zero_axis="true" isee:rescale_min_max="true" left_axis_multi_scale="false" left_axis_auto_scale="true" left_include_units="true" right_axis_multi_scale="false" right_axis_auto_scale="true" right_include_units="true">
+						<plot color="blue" isee:keep_zero_visible="true" pen_width="1" index="0" show_y_axis="true">
+							<entity name="Observed_Infected_1"/>
+						</plot>
+						<plot color="red" isee:keep_zero_visible="true" pen_width="1" index="1" show_y_axis="true">
+							<entity name="Observed_Infected_2"/>
+						</plot>
+						<plot color="fuchsia" isee:keep_zero_visible="true" pen_width="1" index="2" show_y_axis="true">
+							<entity name="Observed_Infected_3"/>
+						</plot>
+						<plot color="#008F44" isee:keep_zero_visible="true" pen_width="1" index="3" show_y_axis="true">
+							<entity name="Observed_Recovered_1"/>
+						</plot>
+						<plot color="#FF7F00" isee:keep_zero_visible="true" pen_width="1" index="4" show_y_axis="true">
+							<entity name="Observed_Recovered_2"/>
+						</plot>
+						<plot color="#7F00FF" isee:keep_zero_visible="true" pen_width="1" index="5" show_y_axis="true">
+							<entity name="Observed_Recovered_3"/>
+						</plot>
+						<plot color="#0CA0FF" isee:keep_zero_visible="true" pen_width="1" index="6" show_y_axis="true">
+							<entity name="Observed_Susceptible_1"/>
+						</plot>
+						<plot color="lime" isee:keep_zero_visible="true" pen_width="1" index="7" show_y_axis="true">
+							<entity name="Observed_Susceptible_2"/>
+						</plot>
+						<plot color="#FF007F" isee:keep_zero_visible="true" pen_width="1" index="8" show_y_axis="true">
+							<entity name="Observed_Susceptible_3"/>
+						</plot>
+					</graph>
+					<graph width="435" height="356" type="time_series" show_grid="false" isee:tick_type="none" include_units_in_legend="false" plot_numbers="true" isee:label_pie_slices="false" isee:show_pie_borders="true" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" isee:fill_intensity="0.1" isee:allow_zero_axis="true" isee:rescale_min_max="true" left_axis_multi_scale="false" left_axis_auto_scale="true" left_include_units="true" right_axis_multi_scale="false" right_axis_auto_scale="true" right_include_units="true">
+						<plot isee:immediately_update_on_user_input="true" color="blue" isee:keep_zero_visible="true" pen_width="1" index="0" show_y_axis="true">
+							<entity name="Infected"/>
+						</plot>
+						<plot isee:immediately_update_on_user_input="true" color="red" isee:keep_zero_visible="true" pen_width="1" index="1" show_y_axis="true">
+							<entity name="Recovered"/>
+						</plot>
+						<plot isee:immediately_update_on_user_input="true" color="fuchsia" isee:keep_zero_visible="true" pen_width="1" index="2" show_y_axis="true">
+							<entity name="Susceptible"/>
+						</plot>
+					</graph>
+				</stacked_container>
+				<button label="Run simulation" isee:tooltip="Click to run 100 simulations" x="611" y="506" width="64" height="50">
+					<actions>
+						<action>start</action>
+					</actions>
+				</button>
+				<button label="Clear results" isee:tooltip="" x="888" y="506" width="64" height="50">
+					<actions>
+						<action>restore_all</action>
+					</actions>
+				</button>
+				<button label="Export latent vars" isee:tooltip="Click to download runs in wide format" x="797.667" y="506" width="64" height="50">
+					<actions>
+						<action orientation="vertical" comparative="false" use_actual_variable_names="true" type="export_data">
+							<entity name="Infected"/>
+							<entity name="Recovered"/>
+							<entity name="Susceptible"/>
+						</action>
+					</actions>
+				</button>
+				<button label="Export observed vars" isee:tooltip="Click to download runs in wide format" x="703.333" y="506" width="70" height="50">
+					<actions>
+						<action interval="0.25" orientation="vertical" comparative="false" use_actual_variable_names="true" type="export_data">
+							<entity name="Observed_Infected_1"/>
+							<entity name="Observed_Infected_2"/>
+							<entity name="Observed_Infected_3"/>
+							<entity name="Observed_Recovered_1"/>
+							<entity name="Observed_Recovered_2"/>
+							<entity name="Observed_Recovered_3"/>
+							<entity name="Observed_Susceptible_1"/>
+							<entity name="Observed_Susceptible_2"/>
+							<entity name="Observed_Susceptible_3"/>
+						</action>
+					</actions>
+				</button>
+				<text_box x="11" y="15" width="1033" height="77">The susceptible-infected-recovered (SIR) model with losing immunity simulates the Suceptible, Infected, and Recovered population during an infectious outbreak. Click [Run simulation] to generate a new synthetic data set from a randomly selected uniform distribution of Contact Rate, Infectivity, Total Population, and Average Length of Immunity. See the observed variables for the latent Susceptible, Infected, and Recovered population. Click [Export observed vars] to download a .csv file in wide format of the simulated data. Click [Export latent vars] to download a .csv file in wide format of the simulated latent variables, which you can use to compare results from estimating values using continuous SEM against the simulated system. Click [Clear results] to clear the graph.</text_box>
+				<numeric_input label_side="left" wrap_title="true" input_width="50" x="90.5" y="477.5" width="94" height="39" min="0" max="50" isee:navigate_to="false" show_name="true">
+					<entity name="e_1"/>
+					<reset_to after="never">0</reset_to>
+				</numeric_input>
+				<numeric_input label_side="left" wrap_title="true" input_width="50" x="249.5" y="477.5" width="94" height="39" min="0" max="50" isee:navigate_to="false" show_name="true">
+					<entity name="e_2"/>
+					<reset_to after="never">0</reset_to>
+				</numeric_input>
+				<numeric_input label_side="left" wrap_title="true" input_width="50" x="398.5" y="477.5" width="94" height="39" min="0" max="50" isee:navigate_to="false" show_name="true">
+					<entity name="e_3"/>
+					<reset_to after="never">0</reset_to>
+				</numeric_input>
+				<numeric_input label_side="left" wrap_title="true" input_width="50" x="89.5" y="521.5" width="94" height="39" min="0" max="50" isee:navigate_to="false" show_name="true">
+					<entity name="e_4"/>
+					<reset_to after="never">0</reset_to>
+				</numeric_input>
+				<numeric_input label_side="left" wrap_title="true" input_width="50" x="248.5" y="521.5" width="94" height="39" min="0" max="50" isee:navigate_to="false" show_name="true">
+					<entity name="e_5"/>
+					<reset_to after="never">0</reset_to>
+				</numeric_input>
+				<numeric_input label_side="left" wrap_title="true" input_width="50" x="397.5" y="521.5" width="94" height="39" min="0" max="50" isee:navigate_to="false" show_name="true">
+					<entity name="e_6"/>
+					<reset_to after="never">0</reset_to>
+				</numeric_input>
+				<numeric_input label_side="left" wrap_title="true" input_width="50" x="88.5" y="560.5" width="94" height="39" min="0" max="50" isee:navigate_to="false" show_name="true">
+					<entity name="e_7"/>
+					<reset_to after="never">0</reset_to>
+				</numeric_input>
+				<numeric_input label_side="left" wrap_title="true" input_width="50" x="247.5" y="560.5" width="94" height="39" min="0" max="50" isee:navigate_to="false" show_name="true">
+					<entity name="e_8"/>
+					<reset_to after="never">0</reset_to>
+				</numeric_input>
+				<numeric_input label_side="left" wrap_title="true" input_width="50" x="396.5" y="560.5" width="94" height="39" min="0" max="50" isee:navigate_to="false" show_name="true">
+					<entity name="e_9"/>
+					<reset_to after="never">0</reset_to>
+				</numeric_input>
+			</view>
+			<isee:templates>
+				<view background="white" page_width="1066" page_height="600" type="template">
+					<style/>
+				</view>
+			</isee:templates>
+			<isee:stories/>
+		</views>
+	</model>
+</xmile>
+
